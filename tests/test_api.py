@@ -223,3 +223,18 @@ async def test_get_circle(api: DlsiteAPI) -> None:
         )
         circle = await api.get_circle(_TEST_MAKER)
         _check_circle_eq(_TEST_CIRCLE, circle)
+
+
+async def test_fetch_work_html_announce_fallback(api: DlsiteAPI) -> None:
+    """Should fall back to announce URL when work URL returns 404."""
+    work = copy(_TEST_INFO_WORK)
+    work_url = f"https://www.dlsite.com/{work.site_id}/work/=/product_id/{work.product_id}.html/"
+    announce_url = f"https://www.dlsite.com/{work.site_id}/announce/=/product_id/{work.product_id}.html/"
+
+    with aioresponses() as m:
+        m.get(work_url, status=404)
+        m.get(announce_url, status=200, body=_WORK_TEST_HTML)
+
+        html = await api._fetch_work_html(work)
+        assert html is not None
+        assert "Test Circle" in html

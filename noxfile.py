@@ -14,14 +14,14 @@ os.environ.update({"PDM_IGNORE_SAVED_PYTHON": "1"})
 package = "dlsite_async"
 python_versions = ["3.14", "3.13", "3.12", "3.11"]
 nox.needs_version = ">= 2021.6.6"
-nox.options.sessions = (
+nox.options.sessions = [
     "pre-commit",
     "mypy",
     "tests",
     "typeguard",
     "xdoctest",
     "docs-build",
-)
+]
 
 
 @session(name="pre-commit", python=python_versions[0])
